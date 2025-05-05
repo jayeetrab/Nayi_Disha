@@ -161,7 +161,7 @@ if st.session_state.is_approved:
 st.header(" Website Article Translator (Original Feature)")
 url = st.text_input("Enter website link:")
 
-target_languages = st.multiselect("Select Indian languages:", [
+target_languages_url = st.multiselect("Select Indian languages:", [
         "Hindi", "Bengali", "Tamil", "Telugu", "Marathi", "Gujarati", "Kannada", "Malayalam", "Odia", "Punjabi", "Urdu", "Assamese"
     ], key="generated_translation")
 
