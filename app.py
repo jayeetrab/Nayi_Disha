@@ -81,7 +81,7 @@ Only output the translated article content — do not include excluded items.
 
 # ---------- Streamlit UI ----------
 st.set_page_config(page_title="Nayi Disha Multilingual Website Translator", layout="wide")
-st.title("Multilingual Translator")
+st.title("Nayi Disha Multilingual Translator")
 
 # Sidebar file uploader for translation guidance
 st.sidebar.header("Upload Guidelines & Exclusions / Examples for Translation (Optional)")
