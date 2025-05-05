@@ -1,0 +1,22 @@
+# Guidelines for Translation
+
+- 
+- Translate into simple and clear {target_language}, understandable by a general Indian audience.
+- Preserve the meaning and intent of the original English text.
+- Maintain a formal yet reader-friendly tone. Avoid overly complex or Sanskritized vocabulary.
+- Translate cultural references or examples appropriately to make sense in an Indian context.
+- Use proper grammar, punctuation, and respectful phrasing.
+- Maintain paragraph structure and headings (if any).
+
+# Exclusions
+
+- Do NOT transliterate English words unless there is no native equivalent (e.g., use "इंटरनेट" only if no better word exists).
+- Do NOT use hyper-local idioms or dialectal slang (e.g., avoid regional variations like "बावळट" in Marathi).
+- Avoid inserting any religious, political, or biased commentary.
+- Do not use overly academic or literary vocabulary unless required by the context.
+- Do not add or omit any information from the original.
+
+# Special Notes
+
+- Preserve factual data, statistics, and names exactly as in the original.
+- If a sentence is ambiguous in English, clarify it in the target language without distorting the meaning.
