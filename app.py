@@ -8,10 +8,11 @@ from bs4 import BeautifulSoup
 # # Load environment variables
 # load_dotenv()
 # GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GOOGLE_API_KEY = "AIzaSyAqNcauLu380PuzMQkpRs8C8Cnx0KL5vbE"
 
 # Configure Gemini
-genai.configure(api_key="AIzaSyAqNcauLu380PuzMQkpRs8C8Cnx0KL5vbE")
-model = genai.GenerativeModel('gemini-2.0-flash')
+genai.configure(api_key=GOOGLE_API_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 # Initialize session state
 if 'generated_content' not in st.session_state:
@@ -70,10 +71,13 @@ Only output the translated article content — do not include excluded items.
         response = model.generate_content(
             contents=[{"role": "user", "parts": [{"text": prompt}]}]
         )
-        return response.text
+        translated_text = response.text
+        # Log translation
+        with open("translation_log.txt", "a", encoding="utf-8") as log_file:
+            log_file.write(f"\n\n---\n\nLanguage: {target_language}\n\nTranslated Content:\n{translated_text}\n")
+        return translated_text
     except Exception as e:
         return f"Error translating: {e}"
-
 
 # ---------- Streamlit UI ----------
 st.set_page_config(page_title="Multilingual Website Translator", layout="wide")
@@ -83,7 +87,7 @@ st.title("Multilingual Translator")
 st.sidebar.header("Upload Guidelines & Exclusions / Examples for Translation (Optional)")
 guidelines_file = st.sidebar.file_uploader("Upload a 'Guidelines.txt' file", type="txt")
 guidelines_and_exclusions = guidelines_file.read().decode('utf-8') if guidelines_file else ""
-example_file=st.sidebar.file_uploader("Upload a 'Example.txt' file", type="txt")
+example_file = st.sidebar.file_uploader("Upload an 'Example.txt' file", type="txt")
 example = example_file.read().decode('utf-8') if example_file else ""
 
 # ---------- 1. Content Generation Section ----------
@@ -164,14 +168,20 @@ if st.session_state.is_approved:
             with cols[i % 2]:
                 st.subheader(lang)
                 st.markdown(f"<div style='text-align: justify;'>{text}</div>", unsafe_allow_html=True)
+                st.download_button(
+                    label=f"Download {lang} Translation",
+                    data=text,
+                    file_name=f"{lang}_translation.txt",
+                    mime="text/plain"
+                )
 
-# ---------- 3. Website Article Translation (Original Logic) ----------
+# ---------- 3. Website Article Translation ----------
 st.header("Website Article Translator")
 url = st.text_input("Enter website link:")
 
 target_languages_url = st.multiselect("Select Indian languages:", [
         "Hindi", "Bengali", "Tamil", "Telugu", "Marathi", "Gujarati", "Kannada", "Malayalam", "Odia", "Punjabi", "Urdu", "Assamese"
-    ], key="generated_translation")
+    ], key="generated_translation_url")
 
 if st.button("Translate Website Article"):
     if not url:
@@ -200,3 +210,18 @@ if st.button("Translate Website Article"):
                 with cols[i % 2]:
                     st.subheader(lang)
                     st.markdown(f"<div style='text-align: justify;'>{text}</div>", unsafe_allow_html=True)
+                    st.download_button(
+                        label=f"Download {lang} Translation",
+                        data=text,
+                        file_name=f"{lang}_translation.txt",
+                        mime="text/plain"
+                    )
+
+# ---------- 4. Translation History Viewer ----------
+with st.expander("🗂 View Translation History Log"):
+    try:
+        with open("translation_log.txt", "r", encoding="utf-8") as log_file:
+            log_content = log_file.read()
+        st.text_area("Translation Log", log_content, height=300)
+    except FileNotFoundError:
+        st.info("Translation log is empty.")
