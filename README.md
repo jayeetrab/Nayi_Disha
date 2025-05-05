@@ -29,6 +29,7 @@ project/
 ├── app.py                  # Main Streamlit app
 ├── .env                    # Environment file (contains your API key)
 |──example.txt              # Example template file
+|──guidelines.txt           # Guidelines template file
 ├── requirements.txt        # Python dependencies
 └── README.md               # This file
 ```
