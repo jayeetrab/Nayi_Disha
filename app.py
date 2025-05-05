@@ -10,7 +10,7 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 # Configure Gemini
-genai.configure(api_key=GOOGLE_API_KEY)
+genai.configure(api_key="AIzaSyAqNcauLu380PuzMQkpRs8C8Cnx0KL5vbE")
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 # Initialize session state
