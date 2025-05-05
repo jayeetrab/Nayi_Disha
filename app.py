@@ -80,7 +80,7 @@ Only output the translated article content — do not include excluded items.
         return f"Error translating: {e}"
 
 # ---------- Streamlit UI ----------
-st.set_page_config(page_title="Multilingual Website Translator", layout="wide")
+st.set_page_config(page_title="Nayi Disha Multilingual Website Translator", layout="wide")
 st.title("Multilingual Translator")
 
 # Sidebar file uploader for translation guidance
