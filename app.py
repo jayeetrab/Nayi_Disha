@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 
 # Configure Gemini
 genai.configure(api_key="AIzaSyAqNcauLu380PuzMQkpRs8C8Cnx0KL5vbE")
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 # Initialize session state
 if 'generated_content' not in st.session_state:
@@ -45,19 +45,26 @@ def extract_main_article(url):
         return f"Error extracting article: {e}"
 
 # Translate content using Gemini
-def translate_content(content, target_language, examples):
+def translate_content(content, target_language, guidelines_and_exclusions):
     prompt = f"""
-You are a professional translator.
-Translate the following article into {target_language}.
-Preserve tone, cultural nuances, and professional style. Use the style from the examples provided.
+You are a professional translator and content analyzer.
 
-Examples:
-{examples}
-
-Article to translate:
+Content to analyze:
 {content}
 
-Note: Only output the translated content.
+Instructions:
+
+1. Ignore and exclude irrelevant page elements like navigation menus, footers, ads, social media buttons (e.g., likes, shares), comments, login prompts, and sidebar items.
+2. Once the irrelevant page elements are ignored and excluded, translate that into {target_language}.
+3. Maintain tone, professional style, and cultural nuance.
+
+Examples:
+{example if example else "No specific example provided."}
+
+Guidelines and Exclusions:
+{guidelines_and_exclusions if guidelines_and_exclusions else "No specific guidelines provided."}
+
+Only output the translated article content — do not include excluded items.
 """
     try:
         response = model.generate_content(
@@ -67,19 +74,20 @@ Note: Only output the translated content.
     except Exception as e:
         return f"Error translating: {e}"
 
+
 # ---------- Streamlit UI ----------
 st.set_page_config(page_title="Multilingual Website Translator", layout="wide")
-st.title("Website Article Multilingual Translator")
+st.title("Multilingual Translator")
 
-# Sidebar example file uploader
-st.sidebar.header("Upload Translation Style Examples (Optional)")
-example_file = st.sidebar.file_uploader("Upload a 'example.txt' file", type="txt")
-examples = example_file.read().decode('utf-8') if example_file else ""
+# Sidebar file uploader for translation guidance
+st.sidebar.header("Upload Guidelines & Exclusions / Examples for Translation (Optional)")
+guidelines_file = st.sidebar.file_uploader("Upload a 'Guidelines.txt' file", type="txt")
+guidelines_and_exclusions = guidelines_file.read().decode('utf-8') if guidelines_file else ""
+example_file=st.sidebar.file_uploader("Upload a 'Example.txt' file", type="txt")
+example = example_file.read().decode('utf-8') if example_file else ""
 
 # ---------- 1. Content Generation Section ----------
-st.header("Content Generation (English)")
-
-st.subheader("Content Creation Inputs")
+st.header("Content Generation")
 
 topic = st.text_input("Enter a topic for content generation:")
 
@@ -146,7 +154,7 @@ if st.session_state.is_approved:
 
         for idx, lang in enumerate(target_languages):
             with st.spinner(f"Translating to {lang}..."):
-                translated = translate_content(st.session_state.generated_content, lang, examples)
+                translated = translate_content(st.session_state.generated_content, lang, guidelines_and_exclusions)
                 translations[lang] = translated
             progress.progress((idx + 1) / len(target_languages))
 
@@ -158,7 +166,7 @@ if st.session_state.is_approved:
                 st.markdown(f"<div style='text-align: justify;'>{text}</div>", unsafe_allow_html=True)
 
 # ---------- 3. Website Article Translation (Original Logic) ----------
-st.header(" Website Article Translator (Original Feature)")
+st.header("Website Article Translator")
 url = st.text_input("Enter website link:")
 
 target_languages_url = st.multiselect("Select Indian languages:", [
@@ -182,7 +190,7 @@ if st.button("Translate Website Article"):
 
             for idx, lang in enumerate(target_languages_url):
                 with st.spinner(f"Translating to {lang}..."):
-                    translated = translate_content(content, lang, examples)
+                    translated = translate_content(content, lang, guidelines_and_exclusions)
                     translations[lang] = translated
                 progress.progress((idx + 1) / len(target_languages_url))
 
